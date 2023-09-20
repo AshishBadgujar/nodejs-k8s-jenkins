@@ -9,7 +9,6 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 dir('app') {
-                    // Navigate to the directory containing the frontend Dockerfile
                     sh 'docker build -t app-img .'
                     sh 'docker tag app-img app-img:latest'
                 }
