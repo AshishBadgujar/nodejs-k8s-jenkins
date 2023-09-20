@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build and Deploy') {
+            steps {
+                dir('app') {
+                    // Navigate to the directory containing the frontend Dockerfile
+                    sh 'docker build -t app-img .'
+                    sh 'docker tag app-img app-img:latest'
+                }
+                script {
+                    def kubeconfig = readFile('.kubeconfig')
+                    sh "echo '$kubeconfig' > ~/.kube/config"
+                    sh 'kubectl apply -f k8s-manifest/app.yaml'
+                }
+            }
+        }
+    }
+}
